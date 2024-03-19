@@ -36,14 +36,14 @@ console.log(process.env.NODE_ENV);
 
 connectDB();
 // connectRedis();
-app.set("trust proxy", "103.250.188.226");
+app.set("trust proxy", 1);
 
 // app.use(logger);
 
 console.log("corsOptions", corsOptions);
 
-// app.use(cookieParser());
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 app.use("/", express.static(path.join(__dirname, "public")));
 
