@@ -158,7 +158,11 @@ exports.userDashboard = async (req, res, next) => {
 exports.getUserLicences = async (req, res, next) => {
 	const user = req.user;
 
+	console.log("user", user);
+
 	const licence = await DrivingLicence.findOne({ userId: user._id });
+
+	console.log("licence", licence);
 
 	//TODO: chage pagination when design is updated
 	res.status(StatusCodes.OK).json({
