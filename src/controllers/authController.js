@@ -32,8 +32,8 @@ const refreshTokenCookieOptions = {
 if (process.env.NODE_ENV === "production") {
 	accessTokenCookieOptions.secure = true;
 	refreshTokenCookieOptions.secure = true;
-	// accessTokenCookieOptions.sameSite = "none";
-	// refreshTokenCookieOptions.sameSite = "none";
+	accessTokenCookieOptions.sameSite = "none";
+	refreshTokenCookieOptions.sameSite = "none";
 }
 
 if (process.env.NODE_ENV === "staging") {
