@@ -27,7 +27,7 @@ const notificationRoutes = require("./src/routes/user-notification-routes");
 const adminAuthRoutes = require("./src/routes/admin/admin-auth-route");
 const adminCatgoryRoutes = require("./src/routes/admin/admin-category-route");
 const adminDocsRoutes = require("./src/routes/admin/admin-doc-routes");
-const DrivingLicence = require("./src/models/DrivingLicence");
+// const DrivingLicence = require("./src/models/DrivingLicence");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -58,13 +58,13 @@ app.use("/api/v1/admin", adminAuthRoutes);
 app.use("/api/v1/admin/category", adminCatgoryRoutes);
 app.use("/api/v1/admin/docs", adminDocsRoutes);
 
-app.get("/api/v1/", async (req, res) => {
-	const record = await DrivingLicence.find();
-	res.status(200).json({
-		success: true,
-		data: record,
-	});
-});
+// app.get("/api/v1/", async (req, res) => {
+// 	const record = await DrivingLicence.find();
+// 	res.status(200).json({
+// 		success: true,
+// 		data: record,
+// 	});
+// });
 
 //end routes
 app.all("*", (req, res) => {
