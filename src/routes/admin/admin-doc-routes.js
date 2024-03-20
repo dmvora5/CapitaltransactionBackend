@@ -7,6 +7,9 @@ const {
 	getAllPassport,
 	getLicence,
 	getPassport,
+	getAllDigitalId,
+	getDigitalId,
+	updateDigitalIdStatus,
 } = require("../../controllers/admin/admin-docs-controller");
 const { idValidation } = require("../../validator/category-validation");
 const {
@@ -22,6 +25,10 @@ router.use(express.json());
 router.use(deserializeUser);
 router.use(requiredUser);
 router.use(restrictTo("Admin"));
+
+router.get("/digitalId", getAllDigitalId);
+router.get("/digitalId/:id", ...idValidation, getDigitalId);
+router.patch("/digitalId", ...statusValidation, updateDigitalIdStatus);
 
 router.get("/licence", getAllLicence);
 router.get("/licence/:id", ...idValidation, getLicence);

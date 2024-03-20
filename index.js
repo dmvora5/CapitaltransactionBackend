@@ -22,12 +22,14 @@ const authRoutes = require("./src/routes/authRoutes");
 const docsRoutes = require("./src/routes/userDocsRoutes");
 const categoryRoutes = require("./src/routes/category-routes");
 const notificationRoutes = require("./src/routes/user-notification-routes");
+const propertyRoutes = require("./src/routes/property-routes");
+const marketPlaceRoutes = require("./src/routes/marketplace-routes");
 
 //admin routes
 const adminAuthRoutes = require("./src/routes/admin/admin-auth-route");
 const adminCatgoryRoutes = require("./src/routes/admin/admin-category-route");
 const adminDocsRoutes = require("./src/routes/admin/admin-doc-routes");
-// const DrivingLicence = require("./src/models/DrivingLicence");
+const adminPropertyRoutes = require("./src/routes/admin/admin-property-routes");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -52,11 +54,14 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/user", docsRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/notification", notificationRoutes);
+app.use("/api/v1/property", propertyRoutes);
+app.use("/api/v1/market", marketPlaceRoutes);
 
 //admin
 app.use("/api/v1/admin", adminAuthRoutes);
 app.use("/api/v1/admin/category", adminCatgoryRoutes);
 app.use("/api/v1/admin/docs", adminDocsRoutes);
+app.use("/api/v1/admin/property", adminPropertyRoutes);
 
 // app.get("/api/v1/", async (req, res) => {
 // 	const record = await DrivingLicence.find();

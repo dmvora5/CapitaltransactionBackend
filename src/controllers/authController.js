@@ -105,6 +105,7 @@ exports.createUser = async (req, res, next) => {
 			phoneNo,
 			email,
 			password,
+			aggreTermsAndConditions: true,
 		});
 
 		console.log("user", user);
@@ -172,6 +173,14 @@ exports.loginUser = async (req, res, next) => {
 				Number(process.env.REFRESH_TOKEN_EXPIRATION_COOKIE) * 60 * 1000,
 			accessToken: access_token,
 			refreshToken: refresh_token,
+		},
+		user: {
+			fullName: user.fullName,
+			userName: user.userName,
+			countryCode: user.countryCode,
+			phoneNo: user.phoneNo,
+			email: user.email,
+			profilePic: user.profilePic,
 		},
 		message: "Login successfull",
 	});

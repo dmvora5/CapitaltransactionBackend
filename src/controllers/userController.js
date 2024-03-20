@@ -1,10 +1,15 @@
 const { StatusCodes } = require("http-status-codes");
 const DrivingLicence = require("../models/DrivingLicence");
-const { uploadImages, getPaginationDetails } = require("../utils/index");
+const {
+	uploadImages,
+	getPaginationDetails,
+	getImagesFromAWS,
+} = require("../utils/index");
 const Passport = require("../models/Passport");
 const RealEstate = require("../models/RealEstate");
 const Equipment = require("../models/Equipment");
 const Notification = require("../models/Notification");
+const DigitalId = require("../models/DigitalId");
 
 exports.createUserDrivingLicence = async (req, res, next) => {
 	let payload = req.body;
@@ -60,9 +65,43 @@ exports.createUserPassport = async (req, res, next) => {
 	});
 };
 
+exports.createDigitalId = async (req, res, next) => {
+	let payload = req.body;
+	const user = req.user;
+
+	const imagesData = await uploadImages({
+		req,
+		bucketName: process.env.AWS_S3_FILE_BUCKET,
+		keyName: "docs",
+	});
+
+	if (imagesData["frontImg"] && imagesData["frontImg"][0]) {
+		payload.frontImage = imagesData["frontImg"][0]?.location;
+		payload.frontImgKey = imagesData["frontImg"][0]?.key;
+	}
+
+	const result = await DigitalId.create({
+		...payload,
+		userId: user._id,
+	});
+
+	res.status(StatusCodes.OK).json({
+		success: true,
+		data: result,
+		message: "DigitalId submit successfully",
+	});
+};
+
 exports.addRealEstate = async (req, res, next) => {
 	let payload = req.body;
 	const user = req.user;
+
+	let cordinates = payload.location?.split(",");
+
+	const geoJson = {
+		type: "Point",
+		coordinates: cordinates?.length ? cordinates : [],
+	};
 
 	const imagesData = await uploadImages({
 		req,
@@ -80,6 +119,7 @@ exports.addRealEstate = async (req, res, next) => {
 
 	const result = await RealEstate.create({
 		...payload,
+		location: geoJson,
 		userId: user._id,
 	});
 
@@ -124,34 +164,72 @@ exports.userDashboard = async (req, res, next) => {
 
 	//change as we progress
 	const [
-		// digitalIdCount,
+		digitalIdCount,
 		drivingLicenceCount,
 		passportCount,
 		realEstateCount,
 		equipmentCount,
+		licence,
+		passport,
+		digitalId,
 	] = await Promise.all([
-		// DigitalId.countDocuments({ userId: user._id }).lean().exec(),
+		DigitalId.countDocuments({ userId: user._id }).lean().exec(),
 		DrivingLicence.countDocuments({ userId: user._id }).lean().exec(),
 		Passport.countDocuments({ userId: user._id }).lean().exec(),
 		RealEstate.countDocuments({ userId: user._id }).lean().exec(),
 		Equipment.countDocuments({ userId: user._id }).lean().exec(),
+		DrivingLicence.findOne({ userId: user._id }).select("+frontImgKey"),
+		Passport.findOne({ userId: user._id }).select("+frontImgKey"),
+		DigitalId.findOne({ userId: user._id }).select("+frontImgKey"),
+	]);
+
+	const [licenceImage, passportImage, digitalIdImage] = await Promise.all([
+		getImagesFromAWS({
+			bucketName: process.env.AWS_S3_FILE_BUCKET,
+			keyName: licence?.frontImgKey,
+		}),
+		getImagesFromAWS({
+			bucketName: process.env.AWS_S3_FILE_BUCKET,
+			keyName: passport?.frontImgKey,
+		}),
+		getImagesFromAWS({
+			bucketName: process.env.AWS_S3_FILE_BUCKET,
+			keyName: digitalId?.frontImgKey,
+		}),
 	]);
 
 	res.status(StatusCodes.OK).json({
 		success: true,
 		data: {
-			// digitalIdCount,
+			digitalIdCount,
 			drivingLicenceCount,
 			passportCount,
 			realEstateCount,
 			equipmentCount,
 			total:
-				// digitalIdCount +
+				digitalIdCount +
 				drivingLicenceCount +
 				passportCount +
 				realEstateCount +
 				equipmentCount,
+			licenceImage,
+			passportImage,
+			digitalIdImage,
 		},
+	});
+};
+
+exports.getUserDigitalId = async (req, res, next) => {
+	const user = req.user;
+
+	const digitalId = await DigitalId.findOne({ userId: user._id });
+
+	//TODO: chage pagination when design is updated
+	res.status(StatusCodes.OK).json({
+		success: true,
+		data: digitalId ? [digitalId] : [],
+		count: digitalId ? 1 : 0,
+		totalPages: digitalId ? 1 : 0,
 	});
 };
 
@@ -222,6 +300,8 @@ exports.getAllUserRealEstate = async (req, res, next) => {
 
 exports.getAllUserEquipment = async (req, res, next) => {
 	const user = req.user;
+
+	console.log("userasdadasd", user);
 
 	const reqQuery = { ...req.query };
 	const { skip, limit } = getPaginationDetails(reqQuery);

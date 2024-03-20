@@ -16,7 +16,7 @@ const drivingLicenceSchema = new mongoose.Schema(
 		},
 		frontImgKey: { type: String, select: false },
 		frontImage: { type: String },
-		backImage: { type: String },
+		// backImage: { type: String },
 		verifyed: { type: Boolean, required: true, default: false },
 	},
 	{

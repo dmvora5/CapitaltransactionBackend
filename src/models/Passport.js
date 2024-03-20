@@ -14,7 +14,7 @@ const passportSchema = new mongoose.Schema(
 		},
 		frontImage: { type: String, required: true },
 		frontImgKey: { type: String, select: false },
-		backImage: { type: String },
+		// backImage: { type: String },
 		verifyed: { type: Boolean, required: true, default: false },
 	},
 	{

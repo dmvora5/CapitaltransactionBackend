@@ -36,10 +36,29 @@ const equipmentSchema = new mongoose.Schema(
 			},
 		],
 		verifyed: { type: Boolean, default: false },
+		isOnSale: { type: Boolean, default: false },
 		status: {
 			type: String,
 			enum: ["Owned", "Sold", "OnSell"],
 			default: "Owned",
+		},
+
+		price: { type: Number },
+		bodyColor: String,
+		mileage: Number,
+		doorCount: Number,
+		description: String,
+		modelNo: String,
+		location: {
+			type: {
+				type: String, // Don't do `{ location: { type: String } }`
+				enum: ["Point"], // 'location.type' must be 'Point'
+				// required: true,
+			},
+			coordinates: {
+				type: [Number],
+				// required: true,
+			},
 		},
 	},
 	{

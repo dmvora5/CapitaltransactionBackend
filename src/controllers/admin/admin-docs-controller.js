@@ -3,6 +3,7 @@ const DrivingLicence = require("../../models/DrivingLicence");
 const Passport = require("../../models/Passport");
 const Notification = require("../../models/Notification");
 const { getPaginationDetails, getImagesFromAWS } = require("../../utils");
+const DigitalId = require("../../models/DigitalId");
 
 exports.updateLicenceStatus = async (req, res, next) => {
 	const { id, status } = req.body;
@@ -45,6 +46,32 @@ exports.updatePassportStatus = async (req, res, next) => {
 				message: "Your Passport Approved Successfully!",
 			}),
 			passport.save(),
+		]);
+	}
+
+	res.status(StatusCodes.OK).json({
+		success: true,
+		message: "Verified successfully!",
+	});
+};
+
+exports.updateDigitalIdStatus = async (req, res, next) => {
+	const { id, status } = req.body;
+
+	console.log("id", id);
+
+	const digitalId = await DigitalId.findById(id);
+
+	if (!digitalId.verifyed) {
+		const userId = digitalId.userId;
+		digitalId.verifyed = Boolean(status);
+		await Promise.all([
+			Notification.create({
+				userId,
+				title: "DigitalId Verification",
+				message: "Your DigitalId Approved Successfully!",
+			}),
+			digitalId.save(),
 		]);
 	}
 
@@ -124,6 +151,41 @@ exports.getAllPassport = async (req, res, next) => {
 	});
 };
 
+exports.getAllDigitalId = async (req, res, next) => {
+	const reqQuery = { ...req.query };
+	const { skip, limit } = getPaginationDetails(reqQuery);
+
+	let match = {};
+	if (reqQuery.search) {
+		match = {
+			$or: [
+				{ fullName: { $regex: reqQuery.search, $options: "i" } },
+				{ cardNo: { $regex: reqQuery.search, $options: "i" } },
+				{ country: { $regex: reqQuery.search, $options: "i" } },
+			],
+		};
+	}
+
+	if (reqQuery.status) {
+		match = {
+			...match,
+			verifyed: Boolean(reqQuery.status),
+		};
+	}
+
+	const [records, count] = await Promise.all([
+		DigitalId.find(match).skip(skip).limit(limit).lean().exec(),
+		DigitalId.countDocuments(match),
+	]);
+
+	res.status(StatusCodes.OK).json({
+		success: true,
+		data: records,
+		count: count,
+		totalPages: Math.ceil(count / limit),
+	});
+};
+
 exports.getLicence = async (req, res, next) => {
 	const { id } = req.params;
 	let result = await DrivingLicence.findById(id)
@@ -150,6 +212,29 @@ exports.getLicence = async (req, res, next) => {
 exports.getPassport = async (req, res, next) => {
 	const { id } = req.params;
 	let result = await Passport.findById(id)
+		.select("+frontImgKey")
+		.lean()
+		.exec();
+
+	const image = await getImagesFromAWS({
+		bucketName: process.env.AWS_S3_FILE_BUCKET,
+		keyName: result.frontImgKey,
+	});
+
+	result = {
+		...result,
+		frontImage: image,
+	};
+
+	res.status(StatusCodes.OK).json({
+		success: true,
+		data: result,
+	});
+};
+
+exports.getDigitalId = async (req, res, next) => {
+	const { id } = req.params;
+	let result = await DigitalId.findById(id)
 		.select("+frontImgKey")
 		.lean()
 		.exec();

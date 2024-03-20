@@ -11,6 +11,7 @@ const {
 	addPassportValidation,
 	addRealEstateValidation,
 	addEquipmentValidation,
+	addDigitalIdValidation,
 } = require("../validator/docs-validation");
 const {
 	createUserDrivingLicence,
@@ -22,6 +23,8 @@ const {
 	getUserPassport,
 	getAllUserRealEstate,
 	getAllUserEquipment,
+	createDigitalId,
+	getUserDigitalId,
 } = require("../controllers/userController");
 const { validateImage } = require("../validator/imageValidator");
 
@@ -32,10 +35,18 @@ router.use(requiredUser);
 router.use(multer().any());
 
 router.get("/dashboard", userDashboard);
+router.get("/digitalId", getUserDigitalId);
 router.get("/driving-licence", getUserLicences);
 router.get("/passport", getUserPassport);
 router.get("/realestate", getAllUserRealEstate);
 router.get("/equipment", getAllUserEquipment);
+
+router.post(
+	"/digitalId",
+	validateImage,
+	...addDigitalIdValidation,
+	createDigitalId
+);
 
 router.post(
 	"/driving-licence",

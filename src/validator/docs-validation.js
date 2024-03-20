@@ -9,6 +9,31 @@ const Joi = require("joi");
 // 	body("address").exists().withMessage("Please enter address!"),
 // ]);
 
+exports.addDigitalIdValidation = joiValidation(
+	Joi.object({
+		fullName: Joi.string().required().messages({
+			"any.required": "fullName is required",
+			"string.empty": "fullName cannot be empty",
+		}),
+		cardNo: Joi.string().required().messages({
+			"any.required": "cardNo is required",
+			"string.empty": "cardNo cannot be empty",
+		}),
+		email: Joi.string().required().messages({
+			"any.required": "email is required",
+			"string.empty": "email must be a valid date",
+		}),
+		phoneNo: Joi.string().required().messages({
+			"any.required": "phoneNo is required",
+			"string.empty": "phoneNo cannot be empty",
+		}),
+		country: Joi.string().required().messages({
+			"any.required": "country is required",
+			"string.empty": "country cannot be empty",
+		}),
+	})
+);
+
 exports.addDrivingLicenceValidation = joiValidation(
 	Joi.object({
 		fullName: Joi.string().required().messages({

@@ -87,6 +87,7 @@ exports.uploadImages = async ({ req, bucketName, keyName }) => {
 };
 
 exports.getImagesFromAWS = async ({ bucketName, keyName }) => {
+	if (!keyName) return null;
 	const downloadParams = {
 		Bucket: bucketName,
 		Key: keyName,
