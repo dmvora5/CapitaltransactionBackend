@@ -226,10 +226,10 @@ exports.addDigitalIdValidation = validateRouteHandler({
 		in: ["body"],
 		exists: { errorMessage: "please enter email!" },
 	},
-	frontImage: {
-		in: ["body"],
-		exists: { errorMessage: "please enter frontImage!" },
-	},
+	// frontImage: {
+	// 	in: ["body"],
+	// 	exists: { errorMessage: "please enter frontImage!" },
+	// },
 	// backImage: {
 	// 	in: ["body"],
 	// 	exists: { errorMessage: "please enter backImage!" },
