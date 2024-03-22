@@ -75,10 +75,8 @@ exports.createDigitalId = async (req, res, next) => {
 		keyName: "docs",
 	});
 
-	console.log("imagesData", imagesData);
-
 	if (imagesData["frontImg"] && imagesData["frontImg"][0]) {
-		payload.frontImg = imagesData["frontImg"][0]?.location;
+		payload.frontImage = imagesData["frontImg"][0]?.location;
 		payload.frontImgKey = imagesData["frontImg"][0]?.key;
 	}
 

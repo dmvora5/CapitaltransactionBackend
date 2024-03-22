@@ -12,7 +12,7 @@ const digitalIdSchema = new mongoose.Schema(
 			ref: "users",
 		},
 		frontImgKey: { type: String, select: false },
-		frontImg: { type: String, required: true },
+		frontImage: { type: String, required: true },
 		// backImg: { type: String },
 		// sign: { type: String },
 		verifyed: { type: Boolean, required: true, default: false },
