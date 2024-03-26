@@ -7,7 +7,7 @@ const schema = Joi.object({
 	originalname: Joi.string().required(),
 	encoding: Joi.string().valid("base64", "binary", "hex", "7bit").required(),
 	mimetype: Joi.string()
-		.valid("image/jpeg", "image/png", "image/gif")
+		.valid("image/jpeg", "image/png", "image/gif", "image/jpg")
 		.required(),
 	size: Joi.number()
 		// .min(1)
@@ -17,10 +17,10 @@ const schema = Joi.object({
 }).required();
 
 exports.validateImage = (req, res, next) => {
-	if(!req.files?.length) {
-		 return next(
+	if (!req.files?.length) {
+		return next(
 			new ErrorHandler(
-				'image required!',
+				"image required!",
 				StatusCodes.UNPROCESSABLE_ENTITY
 			)
 		);
