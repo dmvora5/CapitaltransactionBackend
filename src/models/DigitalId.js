@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const digitalIdSchema = new mongoose.Schema(
 	{
 		fullName: { type: String, required: true },
-		cardNo: { type: String, required: true },
+		cardNo: { type: String, required: true, unique: true },
 		email: { type: String, required: true },
 		phoneNo: { type: String, required: true },
 		country: { type: String, required: true },

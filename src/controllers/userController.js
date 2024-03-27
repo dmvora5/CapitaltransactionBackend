@@ -219,6 +219,53 @@ exports.userDashboard = async (req, res, next) => {
 	});
 };
 
+exports.userUplodedDocument = async (req, res, next) => {
+	const user = req.user;
+
+	//change as we progress
+	const [licence, passport, digitalId] = await Promise.all([
+		DrivingLicence.findOne({ userId: user._id }).select("+frontImgKey"),
+		Passport.findOne({ userId: user._id }).select("+frontImgKey"),
+		DigitalId.findOne({ userId: user._id }).select("+frontImgKey"),
+	]);
+
+	const [licenceImage, passportImage, digitalIdImage] = await Promise.all([
+		getImagesFromAWS({
+			bucketName: process.env.AWS_S3_FILE_BUCKET,
+			keyName: licence?.frontImgKey,
+		}),
+		getImagesFromAWS({
+			bucketName: process.env.AWS_S3_FILE_BUCKET,
+			keyName: passport?.frontImgKey,
+		}),
+		getImagesFromAWS({
+			bucketName: process.env.AWS_S3_FILE_BUCKET,
+			keyName: digitalId?.frontImgKey,
+		}),
+	]);
+
+	res.status(StatusCodes.OK).json({
+		success: true,
+		data: [
+			{
+				name: "Digital ID",
+				value: digitalId?.cardNo || null,
+				image: digitalIdImage,
+			},
+			{
+				name: "Driving Licence",
+				value: licence?.customerId || null,
+				image: licenceImage,
+			},
+			{
+				name: "Passport",
+				value: passport?.passportNo || null,
+				image: passportImage,
+			},
+		],
+	});
+};
+
 exports.getUserDigitalId = async (req, res, next) => {
 	const user = req.user;
 

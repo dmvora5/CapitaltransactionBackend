@@ -6,6 +6,7 @@ const drivingLicenceSchema = new mongoose.Schema(
 		customerId: {
 			type: String,
 			required: [true, "customerId is required"],
+			unique: true,
 		},
 		dob: { type: Date, required: true },
 		gender: { type: String, required: true },

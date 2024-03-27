@@ -6,7 +6,7 @@ const passportSchema = new mongoose.Schema(
 		nationality: { type: String, required: true },
 		dob: { type: Date, required: true },
 		gender: { type: String, required: true },
-		passportNo: { type: String, required: true },
+		passportNo: { type: String, required: true, unique: true },
 		country: { type: String, required: true },
 		userId: {
 			type: mongoose.Schema.Types.ObjectId,

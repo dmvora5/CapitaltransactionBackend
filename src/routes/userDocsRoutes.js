@@ -25,6 +25,7 @@ const {
 	getAllUserEquipment,
 	createDigitalId,
 	getUserDigitalId,
+	userUplodedDocument,
 } = require("../controllers/userController");
 const { validateImage } = require("../validator/imageValidator");
 
@@ -35,6 +36,7 @@ router.use(requiredUser);
 router.use(multer().any());
 
 router.get("/dashboard", userDashboard);
+router.get("/uploaded-docs", userUplodedDocument);
 router.get("/digitalId", getUserDigitalId);
 router.get("/driving-licence", getUserLicences);
 router.get("/passport", getUserPassport);
