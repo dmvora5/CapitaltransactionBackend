@@ -443,3 +443,33 @@ exports.updateViewStatusOfNotification = async (req, res, next) => {
 		message: "",
 	});
 };
+
+exports.deleteRealEstate = async (req, res, next) => {
+	const user = req.user;
+	const id = req.params.id;
+
+	await RealEstate.findOneAndDelete({
+		_id: id,
+		userId: user._id,
+	});
+
+	res.status(StatusCodes.OK).json({
+		success: true,
+		message: "RealEstate deleted successfully!",
+	});
+};
+
+exports.deleteEquipment = async (req, res, next) => {
+	const user = req.user;
+	const id = req.params.id;
+
+	await Equipment.findOneAndDelete({
+		_id: id,
+		userId: user._id,
+	});
+
+	res.status(StatusCodes.OK).json({
+		success: true,
+		message: "Equipment deleted successfully!",
+	});
+};

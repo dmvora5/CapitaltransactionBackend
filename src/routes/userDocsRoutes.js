@@ -26,6 +26,8 @@ const {
 	createDigitalId,
 	getUserDigitalId,
 	userUplodedDocument,
+	deleteRealEstate,
+	deleteEquipment,
 } = require("../controllers/userController");
 const { validateImage } = require("../validator/imageValidator");
 
@@ -77,5 +79,8 @@ router.post(
 	...addEquipmentValidation,
 	addEquipment
 );
+
+router.delete("/realestate/:id", deleteRealEstate);
+router.delete("/equipment/:id", deleteEquipment);
 
 module.exports = router;
